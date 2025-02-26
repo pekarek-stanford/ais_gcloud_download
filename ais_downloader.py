@@ -4,7 +4,6 @@ import zipfile
 from bs4 import BeautifulSoup
 from google.cloud import storage
 from tqdm import tqdm
-import multiprocessing
 import argparse
 
 # NOAA AIS Data URL Format
@@ -127,13 +126,13 @@ def process_file(file_url, year):
 
 
 def process_year(year):
-    """Process all AIS data for a given year."""
+    """Process all AIS data for a given year serially (one at a time)."""
     print(f"🚀 Processing {year}...")
     file_urls = list_files(year)
 
-    # Use multiprocessing to download files in parallel
-    with multiprocessing.Pool(processes=4) as pool:  
-        pool.starmap(process_file, [(file_url, year) for file_url in file_urls])
+    # **Serial Processing Instead of Parallel**
+    for file_url in file_urls:
+        process_file(file_url, year)
 
 
 if __name__ == "__main__":
